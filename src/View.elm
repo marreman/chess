@@ -13,8 +13,6 @@ view : Model -> Html Msg
 view model =
     Html.div []
         [ viewBoard model
-        , Html.hr [] []
-        , Html.text (toString model.selection)
         ]
 
 
@@ -28,7 +26,7 @@ viewBoard model =
         square x y _ =
             viewSquare model ( x, y )
     in
-        Html.div [] <|
+        Html.div [ Html.Attributes.class "board" ] <|
             List.indexedMap rank
                 (List.range 0 7)
 
