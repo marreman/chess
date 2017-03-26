@@ -60,11 +60,11 @@ update msg model =
 
 getValidMoves : Model -> Piece -> Position -> List Position
 getValidMoves model piece position =
-    case piece of
-        ( Pawn, color ) ->
+    case piece.rank of
+        Pawn ->
             let
                 regularMoves =
-                    case color of
+                    case piece.color of
                         Black ->
                             if (Tuple.first position) == 1 then
                                 [ south, path [ south, south ] ]
@@ -78,7 +78,7 @@ getValidMoves model piece position =
                                 [ north ]
 
                 capturingMoves =
-                    case color of
+                    case piece.color of
                         Black ->
                             [ southEast, southWest ]
 
@@ -99,12 +99,12 @@ getValidMoves model piece position =
                             |> List.filter
                                 (\pos ->
                                     Dict.get pos model.pieces
-                                        |> Maybe.map (\p -> (Tuple.second p) /= (Tuple.second piece))
+                                        |> Maybe.map (\p -> p.color /= piece.color)
                                         |> Maybe.withDefault False
                                 )
                        )
 
-        ( King, _ ) ->
+        King ->
             let
                 moves =
                     [ north
@@ -121,7 +121,7 @@ getValidMoves model piece position =
                     |> List.map (sum position)
                     |> List.filter (isValidMove model piece)
 
-        ( Knight, _ ) ->
+        Knight ->
             let
                 moves =
                     [ path [ north, north, east ]
@@ -138,19 +138,19 @@ getValidMoves model piece position =
                     |> List.map (sum position)
                     |> List.filter (isValidMove model piece)
 
-        ( Rook, _ ) ->
+        Rook ->
             (traverse north piece position model)
                 ++ (traverse east piece position model)
                 ++ (traverse south piece position model)
                 ++ (traverse west piece position model)
 
-        ( Bishop, _ ) ->
+        Bishop ->
             (traverse northEast piece position model)
                 ++ (traverse northWest piece position model)
                 ++ (traverse southEast piece position model)
                 ++ (traverse southWest piece position model)
 
-        ( Queen, _ ) ->
+        Queen ->
             (traverse northEast piece position model)
                 ++ (traverse northWest piece position model)
                 ++ (traverse southEast piece position model)
@@ -175,12 +175,12 @@ traverse direction piece position model =
 
         hasEnemyPiece =
             Dict.get newPosition model.pieces
-                |> Maybe.map (\p -> Tuple.second p /= Tuple.second piece)
+                |> Maybe.map (\p -> p.color /= piece.color)
                 |> Maybe.withDefault False
 
         hasFriendlyPiece =
             Dict.get newPosition model.pieces
-                |> Maybe.map (\p -> Tuple.second p == Tuple.second piece)
+                |> Maybe.map (\p -> p.color == piece.color)
                 |> Maybe.withDefault False
     in
         if isOutOfBounds then
@@ -194,10 +194,10 @@ traverse direction piece position model =
 
 
 isValidMove : Model -> Piece -> Position -> Bool
-isValidMove model ( _, capturingColor ) position =
+isValidMove model capturingPiece position =
     case Dict.get position model.pieces of
         Nothing ->
             True
 
-        Just ( _, color ) ->
-            color /= capturingColor
+        Just piece ->
+            piece.color /= capturingPiece.color

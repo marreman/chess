@@ -79,8 +79,8 @@ viewPiece position model =
                 [ onClick (Select piece position)
                 , classList
                     [ "piece" => True
-                    , (toString <| Tuple.first piece) => True
-                    , (toString <| Tuple.second piece) => True
+                    , (toString piece.rank) => True
+                    , (toString piece.color) => True
                     , "selected"
                         => (model.selection
                                 |> Maybe.map (\selection -> selection.position == position)
