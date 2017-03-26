@@ -88,14 +88,14 @@ getValidMoves board piece position =
                         White ->
                             [ northEast, northWest ]
             in
-                (regularMoves
-                    |> List.map (sum position)
-                    |> List.filter (isEmpty board)
-                )
-                    ++ (capturingMoves
-                            |> List.map (sum position)
-                            |> List.filter (hasEnemyPiece board piece)
-                       )
+                List.concat
+                    [ regularMoves
+                        |> List.map (sum position)
+                        |> List.filter (isEmpty board)
+                    , capturingMoves
+                        |> List.map (sum position)
+                        |> List.filter (hasEnemyPiece board piece)
+                    ]
 
         King ->
             let
@@ -132,26 +132,32 @@ getValidMoves board piece position =
                     |> List.filter (isValidMove board piece)
 
         Rook ->
-            (traverse north piece position board)
-                ++ (traverse east piece position board)
-                ++ (traverse south piece position board)
-                ++ (traverse west piece position board)
+            List.concat
+                [ traverse north piece position board
+                , traverse east piece position board
+                , traverse south piece position board
+                , traverse west piece position board
+                ]
 
         Bishop ->
-            (traverse northEast piece position board)
-                ++ (traverse northWest piece position board)
-                ++ (traverse southEast piece position board)
-                ++ (traverse southWest piece position board)
+            List.concat
+                [ traverse northEast piece position board
+                , traverse northWest piece position board
+                , traverse southEast piece position board
+                , traverse southWest piece position board
+                ]
 
         Queen ->
-            (traverse northEast piece position board)
-                ++ (traverse northWest piece position board)
-                ++ (traverse southEast piece position board)
-                ++ (traverse southWest piece position board)
-                ++ (traverse north piece position board)
-                ++ (traverse east piece position board)
-                ++ (traverse south piece position board)
-                ++ (traverse west piece position board)
+            List.concat
+                [ traverse northEast piece position board
+                , traverse northWest piece position board
+                , traverse southEast piece position board
+                , traverse southWest piece position board
+                , traverse north piece position board
+                , traverse east piece position board
+                , traverse south piece position board
+                , traverse west piece position board
+                ]
 
 
 traverse : Position -> Piece -> Position -> Board -> List Position
