@@ -18,18 +18,21 @@ update msg model =
             model
 
         Select piece position ->
-            case model.selection of
-                Nothing ->
-                    { model
-                        | selection =
-                            Just
-                                { position = position
-                                , validMoves = toDict <| getValidMoves model piece position
-                                }
-                    }
+            let
+                selection =
+                    Just
+                        { position = position
+                        , validMoves =
+                            toDict <|
+                                getValidMoves model.board piece position
+                        }
+            in
+                case model.selection of
+                    Nothing ->
+                        { model | selection = selection }
 
-                _ ->
-                    model
+                    _ ->
+                        model
 
         MoveTo position ->
             case model.selection of
@@ -39,11 +42,11 @@ update msg model =
                 Just selection ->
                     let
                         pieceToMove =
-                            model.pieces
+                            model.board
                                 |> Dict.get selection.position
 
                         movePiece piece =
-                            model.pieces
+                            model.board
                                 |> Dict.remove selection.position
                                 |> Dict.update position (\_ -> Just piece)
                     in
@@ -53,13 +56,13 @@ update msg model =
 
                             Just piece ->
                                 { model
-                                    | pieces = movePiece piece
+                                    | board = movePiece piece
                                     , selection = Nothing
                                 }
 
 
-getValidMoves : Model -> Piece -> Position -> List Position
-getValidMoves model piece position =
+getValidMoves : Board -> Piece -> Position -> List Position
+getValidMoves board piece position =
     case piece.rank of
         Pawn ->
             let
@@ -89,7 +92,7 @@ getValidMoves model piece position =
                     |> List.map (sum position)
                     |> List.filter
                         (\pos ->
-                            Dict.get pos model.pieces
+                            Dict.get pos board
                                 |> Maybe.map (\_ -> False)
                                 |> Maybe.withDefault True
                         )
@@ -98,7 +101,7 @@ getValidMoves model piece position =
                             |> List.map (sum position)
                             |> List.filter
                                 (\pos ->
-                                    Dict.get pos model.pieces
+                                    Dict.get pos board
                                         |> Maybe.map (\p -> p.color /= piece.color)
                                         |> Maybe.withDefault False
                                 )
@@ -119,7 +122,7 @@ getValidMoves model piece position =
             in
                 moves
                     |> List.map (sum position)
-                    |> List.filter (isValidMove model piece)
+                    |> List.filter (isValidMove board piece)
 
         Knight ->
             let
@@ -136,32 +139,33 @@ getValidMoves model piece position =
             in
                 moves
                     |> List.map (sum position)
-                    |> List.filter (isValidMove model piece)
+                    |> List.filter (isValidMove board piece)
 
         Rook ->
-            (traverse north piece position model)
-                ++ (traverse east piece position model)
-                ++ (traverse south piece position model)
-                ++ (traverse west piece position model)
+            (traverse north piece position board)
+                ++ (traverse east piece position board)
+                ++ (traverse south piece position board)
+                ++ (traverse west piece position board)
 
         Bishop ->
-            (traverse northEast piece position model)
-                ++ (traverse northWest piece position model)
-                ++ (traverse southEast piece position model)
-                ++ (traverse southWest piece position model)
+            (traverse northEast piece position board)
+                ++ (traverse northWest piece position board)
+                ++ (traverse southEast piece position board)
+                ++ (traverse southWest piece position board)
 
         Queen ->
-            (traverse northEast piece position model)
-                ++ (traverse northWest piece position model)
-                ++ (traverse southEast piece position model)
-                ++ (traverse southWest piece position model)
-                ++ (traverse north piece position model)
-                ++ (traverse east piece position model)
-                ++ (traverse south piece position model)
-                ++ (traverse west piece position model)
+            (traverse northEast piece position board)
+                ++ (traverse northWest piece position board)
+                ++ (traverse southEast piece position board)
+                ++ (traverse southWest piece position board)
+                ++ (traverse north piece position board)
+                ++ (traverse east piece position board)
+                ++ (traverse south piece position board)
+                ++ (traverse west piece position board)
 
 
-traverse direction piece position model =
+traverse : Position -> Piece -> Position -> Board -> List Position
+traverse direction piece position board =
     let
         newPosition =
             sum position direction
@@ -174,12 +178,12 @@ traverse direction piece position model =
                 x > 7 || y > 7 || x < 0 || y < 0
 
         hasEnemyPiece =
-            Dict.get newPosition model.pieces
+            Dict.get newPosition board
                 |> Maybe.map (\p -> p.color /= piece.color)
                 |> Maybe.withDefault False
 
         hasFriendlyPiece =
-            Dict.get newPosition model.pieces
+            Dict.get newPosition board
                 |> Maybe.map (\p -> p.color == piece.color)
                 |> Maybe.withDefault False
     in
@@ -190,12 +194,12 @@ traverse direction piece position model =
         else if hasEnemyPiece then
             [ newPosition ]
         else
-            [ newPosition ] ++ traverse direction piece newPosition model
+            [ newPosition ] ++ traverse direction piece newPosition board
 
 
-isValidMove : Model -> Piece -> Position -> Bool
-isValidMove model capturingPiece position =
-    case Dict.get position model.pieces of
+isValidMove : Board -> Piece -> Position -> Bool
+isValidMove board capturingPiece position =
+    case Dict.get position board of
         Nothing ->
             True
 

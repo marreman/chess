@@ -4,10 +4,17 @@ import Dict exposing (Dict)
 import Util exposing (..)
 
 
+-- TYPES
+
+
 type alias Model =
     { selection : Maybe Selection
-    , pieces : Dict Position Piece
+    , board : Board
     }
+
+
+type alias Board =
+    Dict Position Piece
 
 
 type alias Selection =
@@ -38,15 +45,19 @@ type Color
     | Black
 
 
+
+-- INITIAL MODEL
+
+
 model : Model
 model =
     { selection = Nothing
-    , pieces = pieces
+    , board = board
     }
 
 
-pieces : Dict Position Piece
-pieces =
+board : Dict Position Piece
+board =
     Dict.fromList
         [ ( 0, 0 ) => (Piece Rook Black)
         , ( 0, 1 ) => (Piece Knight Black)

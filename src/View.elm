@@ -70,7 +70,7 @@ viewSquare model position =
 
 viewPiece : Position -> Model -> Html Msg
 viewPiece position model =
-    case Dict.get position model.pieces of
+    case Dict.get position model.board of
         Nothing ->
             text ""
 
