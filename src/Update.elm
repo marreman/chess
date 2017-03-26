@@ -24,7 +24,7 @@ update msg model =
                         | selection =
                             Just
                                 { position = position
-                                , validMoves = getValidMoves model piece position
+                                , validMoves = toDict <| getValidMoves model piece position
                                 }
                     }
 
@@ -58,7 +58,7 @@ update msg model =
                                 }
 
 
-getValidMoves : Model -> Piece -> Position -> Dict Position Bool
+getValidMoves : Model -> Piece -> Position -> List Position
 getValidMoves model piece position =
     case piece of
         ( Knight, _ ) ->
@@ -77,10 +77,47 @@ getValidMoves model piece position =
                 moves
                     |> List.map (sum position)
                     |> List.filter (isValidMove model piece)
-                    |> toDict
+
+        ( Rook, _ ) ->
+            (traverse north piece position model)
+                ++ (traverse east piece position model)
+                ++ (traverse south piece position model)
+                ++ (traverse west piece position model)
 
         _ ->
-            Dict.empty
+            []
+
+
+traverse direction piece position model =
+    let
+        newPosition =
+            sum position direction
+
+        isOutOfBounds =
+            let
+                ( x, y ) =
+                    newPosition
+            in
+                x + y > 14 || x + y < 0
+
+        hasEnemyPiece =
+            Dict.get newPosition model.pieces
+                |> Maybe.map (\p -> Tuple.second p /= Tuple.second piece)
+                |> Maybe.withDefault False
+
+        hasFriendlyPiece =
+            Dict.get newPosition model.pieces
+                |> Maybe.map (\p -> Tuple.second p == Tuple.second piece)
+                |> Maybe.withDefault False
+    in
+        if isOutOfBounds then
+            []
+        else if hasFriendlyPiece then
+            []
+        else if hasEnemyPiece then
+            [ newPosition ]
+        else
+            [ newPosition ] ++ traverse direction piece newPosition model
 
 
 isValidMove : Model -> Piece -> Position -> Bool
