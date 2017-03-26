@@ -90,6 +90,16 @@ getValidMoves model piece position =
                 ++ (traverse southEast piece position model)
                 ++ (traverse southWest piece position model)
 
+        ( Queen, _ ) ->
+            (traverse northEast piece position model)
+                ++ (traverse northWest piece position model)
+                ++ (traverse southEast piece position model)
+                ++ (traverse southWest piece position model)
+                ++ (traverse north piece position model)
+                ++ (traverse east piece position model)
+                ++ (traverse south piece position model)
+                ++ (traverse west piece position model)
+
         _ ->
             []
 
