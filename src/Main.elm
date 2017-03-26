@@ -6,6 +6,7 @@ import Update
 import View
 
 
+main : Program Never Model.Model Update.Msg
 main =
     Html.beginnerProgram
         { model = Model.model

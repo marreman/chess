@@ -9,6 +9,7 @@ import Model exposing (..)
 import Update exposing (..)
 
 
+view : Model -> Html Msg
 view model =
     Html.div []
         [ viewBoard model
@@ -17,6 +18,7 @@ view model =
         ]
 
 
+viewBoard : Model -> Html Msg
 viewBoard model =
     let
         rank x _ =
@@ -31,6 +33,7 @@ viewBoard model =
                 (List.range 0 7)
 
 
+viewSquare : Model -> Position -> Html Msg
 viewSquare model position =
     let
         ( x, y ) =
