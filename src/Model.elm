@@ -51,6 +51,7 @@ pieces =
         , ( 6, 1 ) => ( Pawn, White )
         , ( 1, 0 ) => ( Rook, Black )
         , ( 2, 0 ) => ( Queen, Black )
+        , ( 3, 0 ) => ( King, Black )
         ]
 
 

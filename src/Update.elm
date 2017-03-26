@@ -61,6 +61,23 @@ update msg model =
 getValidMoves : Model -> Piece -> Position -> List Position
 getValidMoves model piece position =
     case piece of
+        ( King, _ ) ->
+            let
+                moves =
+                    [ north
+                    , northEast
+                    , east
+                    , southEast
+                    , south
+                    , southWest
+                    , west
+                    , northWest
+                    ]
+            in
+                moves
+                    |> List.map (sum position)
+                    |> List.filter (isValidMove model piece)
+
         ( Knight, _ ) ->
             let
                 moves =
