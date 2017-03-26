@@ -133,51 +133,51 @@ getValidMoves board piece position =
 
         Rook ->
             List.concat
-                [ traverse north piece position board
-                , traverse east piece position board
-                , traverse south piece position board
-                , traverse west piece position board
+                [ traverse board piece position north
+                , traverse board piece position east
+                , traverse board piece position south
+                , traverse board piece position west
                 ]
 
         Bishop ->
             List.concat
-                [ traverse northEast piece position board
-                , traverse northWest piece position board
-                , traverse southEast piece position board
-                , traverse southWest piece position board
+                [ traverse board piece position northEast
+                , traverse board piece position northWest
+                , traverse board piece position southEast
+                , traverse board piece position southWest
                 ]
 
         Queen ->
             List.concat
-                [ traverse northEast piece position board
-                , traverse northWest piece position board
-                , traverse southEast piece position board
-                , traverse southWest piece position board
-                , traverse north piece position board
-                , traverse east piece position board
-                , traverse south piece position board
-                , traverse west piece position board
+                [ traverse board piece position northEast
+                , traverse board piece position northWest
+                , traverse board piece position southEast
+                , traverse board piece position southWest
+                , traverse board piece position north
+                , traverse board piece position east
+                , traverse board piece position south
+                , traverse board piece position west
                 ]
 
 
-traverse : Position -> Piece -> Position -> Board -> List Position
-traverse direction piece position board =
+traverse : Board -> Piece -> Position -> Position -> List Position
+traverse board piece position direction =
     let
         newPosition =
             sum position direction
     in
-        if isOutOfBounds newPosition then
+        if isOutsideBoard newPosition then
             []
         else if hasFriendlyPiece board piece newPosition then
             []
         else if hasEnemyPiece board piece newPosition then
             [ newPosition ]
         else
-            [ newPosition ] ++ traverse direction piece newPosition board
+            [ newPosition ] ++ traverse board piece newPosition direction
 
 
-isOutOfBounds : Position -> Bool
-isOutOfBounds ( x, y ) =
+isOutsideBoard : Position -> Bool
+isOutsideBoard ( x, y ) =
     x > 7 || y > 7 || x < 0 || y < 0
 
 
