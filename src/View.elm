@@ -1,8 +1,8 @@
 module View exposing (view)
 
-import Html exposing (Html)
-import Html.Attributes
-import Html.Events
+import Html exposing (..)
+import Html.Attributes exposing (class, classList)
+import Html.Events exposing (onClick)
 import Dict
 import Util exposing (..)
 import Model exposing (..)
@@ -11,24 +11,16 @@ import Update exposing (..)
 
 view : Model -> Html Msg
 view model =
-    Html.div []
-        [ viewBoard model
-        ]
-
-
-viewBoard : Model -> Html Msg
-viewBoard model =
     let
-        rank x _ =
-            Html.div [ Html.Attributes.class "rank" ] <|
-                List.indexedMap (square x) (List.range 0 7)
+        rank x =
+            div [ class "rank" ] <|
+                List.map (square x) (List.range 0 7)
 
-        square x y _ =
+        square x y =
             viewSquare model ( x, y )
     in
-        Html.div [ Html.Attributes.class "board" ] <|
-            List.indexedMap rank
-                (List.range 0 7)
+        div [ class "board" ] <|
+            List.map rank (List.range 0 7)
 
 
 viewSquare : Model -> Position -> Html Msg
@@ -47,12 +39,6 @@ viewSquare model position =
                 |> Maybe.map isValidSquare
                 |> Maybe.withDefault False
 
-        classList =
-            [ "square" => True
-            , color => True
-            , "valid" => validSquare
-            ]
-
         color =
             if (x + y) % 2 == 0 then
                 "light"
@@ -65,13 +51,18 @@ viewSquare model position =
             else
                 NoOp
     in
-        Html.div
-            [ Html.Events.onClick move
-            , Html.Attributes.classList classList
+        div
+            [ onClick move
+            , classList
+                [ "square" => True
+                , color => True
+                , "valid" => validSquare
+                ]
             ]
-            [ Html.div []
-                [ Html.span [ Html.Attributes.class "position" ]
-                    [ Html.text (toString ( x, y )) ]
+            [ div []
+                [ span
+                    [ class "position" ]
+                    [ text (toString ( x, y )) ]
                 , viewPiece ( x, y ) model
                 ]
             ]
@@ -81,12 +72,12 @@ viewPiece : Position -> Model -> Html Msg
 viewPiece position model =
     case Dict.get position model.pieces of
         Nothing ->
-            Html.text ""
+            text ""
 
         Just piece ->
-            Html.span
-                [ Html.Events.onClick (Select piece position)
-                , Html.Attributes.classList
+            span
+                [ onClick (Select piece position)
+                , classList
                     [ "piece" => True
                     , (toString <| Tuple.first piece) => True
                     , (toString <| Tuple.second piece) => True
