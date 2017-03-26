@@ -44,14 +44,15 @@ viewSquare model position =
                 |> Dict.get position
                 |> Maybe.withDefault False
 
+        validSquare =
+            model.selection
+                |> Maybe.map isValidSquare
+                |> Maybe.withDefault False
+
         classList =
             [ "square" => True
             , color => True
-            , "valid"
-                => (model.selection
-                        |> Maybe.map isValidSquare
-                        |> Maybe.withDefault False
-                   )
+            , "valid" => validSquare
             ]
 
         color =
@@ -59,9 +60,17 @@ viewSquare model position =
                 "light"
             else
                 "dark"
+
+        move =
+            if validSquare then
+                MoveTo position
+            else
+                NoOp
     in
         Html.div
-            [ Html.Attributes.classList classList ]
+            [ Html.Events.onClick move
+            , Html.Attributes.classList classList
+            ]
             [ Html.div []
                 [ Html.span [ Html.Attributes.class "position" ]
                     [ Html.text (toString ( x, y )) ]
@@ -81,8 +90,8 @@ viewPiece position model =
                 [ Html.Events.onClick (Select piece position)
                 , Html.Attributes.classList
                     [ "piece" => True
-                    , (toString piece.rank) => True
-                    , (toString piece.color) => True
+                    , (toString <| Tuple.first piece) => True
+                    , (toString <| Tuple.second piece) => True
                     , "selected"
                         => (model.selection
                                 |> Maybe.map (\selection -> selection.position == position)
