@@ -1,0 +1,57 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont;
+}
+
+.rank {
+  display: flex;
+}
+
+.square {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  width: 50px;
+}
+
+.light {
+  background-color: palegreen;
+}
+
+.dark {
+  background-color: lightgreen;
+}
+
+.valid {
+  background-color: green;
+}
+
+.position {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 10px;
+}
+
+.piece {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.King.White:before { content: "♔"; }
+.King.Black:before { content: "♚"; }
+.Queen.White:before { content: "♕"; }
+.Queen.Black:before { content: "♛"; }
+.Bishop.White:before { content: "♗"; }
+.Bishop.Black:before { content: "♝"; }
+.Knight.White:before { content: "♘"; }
+.Knight.Black:before { content: "♞"; }
+.Rook.White:before { content: "♖"; }
+.Rook.Black:before { content: "♜"; }
+.Pawn.White:before { content: "♙"; }
+.Pawn.Black:before { content: "♟"; }
+
+.selected:before {
+  color: red;
+}
