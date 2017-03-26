@@ -61,6 +61,49 @@ update msg model =
 getValidMoves : Model -> Piece -> Position -> List Position
 getValidMoves model piece position =
     case piece of
+        ( Pawn, color ) ->
+            let
+                regularMoves =
+                    case color of
+                        Black ->
+                            if (Tuple.first position) == 1 then
+                                [ south, path [ south, south ] ]
+                            else
+                                [ south ]
+
+                        White ->
+                            if (Tuple.first position) == 6 then
+                                [ north, path [ north, north ] ]
+                            else
+                                [ north ]
+
+                capturingMoves =
+                    case color of
+                        Black ->
+                            [ southEast, southWest ]
+
+                        White ->
+                            [ northEast, northWest ]
+            in
+                (regularMoves
+                    |> List.map (sum position)
+                    |> List.filter
+                        (\pos ->
+                            Dict.get pos model.pieces
+                                |> Maybe.map (\_ -> False)
+                                |> Maybe.withDefault True
+                        )
+                )
+                    ++ (capturingMoves
+                            |> List.map (sum position)
+                            |> List.filter
+                                (\pos ->
+                                    Dict.get pos model.pieces
+                                        |> Maybe.map (\p -> (Tuple.second p) /= (Tuple.second piece))
+                                        |> Maybe.withDefault False
+                                )
+                       )
+
         ( King, _ ) ->
             let
                 moves =
@@ -116,9 +159,6 @@ getValidMoves model piece position =
                 ++ (traverse east piece position model)
                 ++ (traverse south piece position model)
                 ++ (traverse west piece position model)
-
-        _ ->
-            []
 
 
 traverse direction piece position model =
