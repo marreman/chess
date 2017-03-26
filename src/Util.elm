@@ -30,9 +30,29 @@ north =
     ( -1, 0 )
 
 
+northWest : ( Int, Int )
+northWest =
+    ( -1, -1 )
+
+
+northEast : ( Int, Int )
+northEast =
+    ( -1, 1 )
+
+
 south : ( Int, Int )
 south =
     ( 1, 0 )
+
+
+southWest : ( Int, Int )
+southWest =
+    ( 1, -1 )
+
+
+southEast : ( Int, Int )
+southEast =
+    ( 1, 1 )
 
 
 east : ( Int, Int )

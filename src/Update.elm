@@ -84,6 +84,12 @@ getValidMoves model piece position =
                 ++ (traverse south piece position model)
                 ++ (traverse west piece position model)
 
+        ( Bishop, _ ) ->
+            (traverse northEast piece position model)
+                ++ (traverse northWest piece position model)
+                ++ (traverse southEast piece position model)
+                ++ (traverse southWest piece position model)
+
         _ ->
             []
 
@@ -98,7 +104,7 @@ traverse direction piece position model =
                 ( x, y ) =
                     newPosition
             in
-                x + y > 14 || x + y < 0
+                x > 7 || y > 7 || x < 0 || y < 0
 
         hasEnemyPiece =
             Dict.get newPosition model.pieces

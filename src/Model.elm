@@ -47,9 +47,9 @@ model =
 
 pieces =
     Dict.fromList
-        [ ( 7, 1 ) => ( Rook, White )
+        [ ( 7, 1 ) => ( Bishop, White )
         , ( 6, 1 ) => ( Pawn, White )
-        , ( 1, 0 ) => ( Pawn, Black )
+        , ( 1, 0 ) => ( Rook, Black )
         ]
 
 
