@@ -90,21 +90,11 @@ getValidMoves board piece position =
             in
                 (regularMoves
                     |> List.map (sum position)
-                    |> List.filter
-                        (\pos ->
-                            Dict.get pos board
-                                |> Maybe.map (\_ -> False)
-                                |> Maybe.withDefault True
-                        )
+                    |> List.filter (isEmpty board)
                 )
                     ++ (capturingMoves
                             |> List.map (sum position)
-                            |> List.filter
-                                (\pos ->
-                                    Dict.get pos board
-                                        |> Maybe.map (\p -> p.color /= piece.color)
-                                        |> Maybe.withDefault False
-                                )
+                            |> List.filter (hasEnemyPiece board piece)
                        )
 
         King ->
@@ -169,32 +159,52 @@ traverse direction piece position board =
     let
         newPosition =
             sum position direction
-
-        isOutOfBounds =
-            let
-                ( x, y ) =
-                    newPosition
-            in
-                x > 7 || y > 7 || x < 0 || y < 0
-
-        hasEnemyPiece =
-            Dict.get newPosition board
-                |> Maybe.map (\p -> p.color /= piece.color)
-                |> Maybe.withDefault False
-
-        hasFriendlyPiece =
-            Dict.get newPosition board
-                |> Maybe.map (\p -> p.color == piece.color)
-                |> Maybe.withDefault False
     in
-        if isOutOfBounds then
+        if isOutOfBounds newPosition then
             []
-        else if hasFriendlyPiece then
+        else if hasFriendlyPiece board piece newPosition then
             []
-        else if hasEnemyPiece then
+        else if hasEnemyPiece board piece newPosition then
             [ newPosition ]
         else
             [ newPosition ] ++ traverse direction piece newPosition board
+
+
+isOutOfBounds : Position -> Bool
+isOutOfBounds ( x, y ) =
+    x > 7 || y > 7 || x < 0 || y < 0
+
+
+hasEnemyPiece : Board -> Piece -> Position -> Bool
+hasEnemyPiece board piece position =
+    query board position (isDifferentColor piece) False
+
+
+hasFriendlyPiece : Board -> Piece -> Position -> Bool
+hasFriendlyPiece board piece position =
+    query board position (isSameColor piece) False
+
+
+isEmpty : Board -> Position -> Bool
+isEmpty board position =
+    query board position (\_ -> False) True
+
+
+isSameColor : Piece -> Piece -> Bool
+isSameColor p1 p2 =
+    p1.color == p2.color
+
+
+isDifferentColor : Piece -> Piece -> Bool
+isDifferentColor p1 p2 =
+    p1.color /= p2.color
+
+
+query : Board -> Position -> (Piece -> Bool) -> Bool -> Bool
+query board position function default =
+    Dict.get position board
+        |> Maybe.map function
+        |> Maybe.withDefault default
 
 
 isValidMove : Board -> Piece -> Position -> Bool
