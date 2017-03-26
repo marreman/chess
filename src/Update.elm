@@ -112,7 +112,7 @@ getValidMoves board piece position =
             in
                 moves
                     |> List.map (sum position)
-                    |> List.filter (isValidMove board piece)
+                    |> List.filter (isEmptyOrHasEnemyPiece board piece)
 
         Knight ->
             let
@@ -129,7 +129,7 @@ getValidMoves board piece position =
             in
                 moves
                     |> List.map (sum position)
-                    |> List.filter (isValidMove board piece)
+                    |> List.filter (isEmptyOrHasEnemyPiece board piece)
 
         Rook ->
             List.concat
@@ -191,6 +191,11 @@ hasFriendlyPiece board piece position =
     query board position (isSameColor piece) False
 
 
+isEmptyOrHasEnemyPiece : Board -> Piece -> Position -> Bool
+isEmptyOrHasEnemyPiece board piece position =
+    query board position (isDifferentColor piece) True
+
+
 isEmpty : Board -> Position -> Bool
 isEmpty board position =
     query board position (\_ -> False) True
@@ -211,13 +216,3 @@ query board position function default =
     Dict.get position board
         |> Maybe.map function
         |> Maybe.withDefault default
-
-
-isValidMove : Board -> Piece -> Position -> Bool
-isValidMove board capturingPiece position =
-    case Dict.get position board of
-        Nothing ->
-            True
-
-        Just piece ->
-            piece.color /= capturingPiece.color
