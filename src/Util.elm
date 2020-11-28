@@ -9,12 +9,6 @@ toDict list =
         List.map (\value -> ( value, True )) list
 
 
-(=>) : a -> b -> ( a, b )
-(=>) x y =
-    ( x, y )
-infixr 9 =>
-
-
 sum : ( Int, Int ) -> ( Int, Int ) -> ( Int, Int )
 sum ( x, y ) ( rx, ry ) =
     ( rx + x, ry + y )

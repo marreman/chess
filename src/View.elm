@@ -1,12 +1,12 @@
 module View exposing (view)
 
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
-import Dict
-import Util exposing (..)
 import Model exposing (..)
 import Update exposing (..)
+import Util exposing (..)
 
 
 view : Model -> Html Msg
@@ -19,8 +19,8 @@ view model =
         square x y =
             viewSquare model ( x, y )
     in
-        div [ class "board" ] <|
-            List.map rank (List.range 0 7)
+    div [ class "board" ] <|
+        List.map rank (List.range 0 7)
 
 
 viewSquare : Model -> Position -> Html Msg
@@ -40,32 +40,34 @@ viewSquare model position =
                 |> Maybe.withDefault False
 
         color =
-            if (x + y) % 2 == 0 then
+            if modBy 2 (x + y) == 0 then
                 "light"
+
             else
                 "dark"
 
         move =
             if validSquare then
                 MoveTo position
+
             else
                 NoOp
     in
-        div
-            [ onClick move
-            , classList
-                [ "square" => True
-                , color => True
-                , "valid" => validSquare
-                ]
+    div
+        [ onClick move
+        , classList
+            [ ( "square", True )
+            , ( color, True )
+            , ( "valid", validSquare )
             ]
-            [ div []
-                [ span
-                    [ class "position" ]
-                    [ text (toString ( x, y )) ]
-                , viewPiece ( x, y ) model
-                ]
+        ]
+        [ div []
+            [ span
+                [ class "position" ]
+                [ text <| String.concat [ "(", String.fromInt x, ", ", String.fromInt y, ")" ] ]
+            , viewPiece ( x, y ) model
             ]
+        ]
 
 
 viewPiece : Position -> Model -> Html Msg
@@ -78,14 +80,46 @@ viewPiece position model =
             span
                 [ onClick (Select piece position)
                 , classList
-                    [ "piece" => True
-                    , (toString piece.rank) => True
-                    , (toString piece.color) => True
-                    , "selected"
-                        => (model.selection
-                                |> Maybe.map (\selection -> selection.position == position)
-                                |> Maybe.withDefault False
-                           )
+                    [ ( "piece", True )
+                    , ( viewRank piece.rank, True )
+                    , ( viewColor piece.color, True )
+                    , ( "selected"
+                      , model.selection
+                            |> Maybe.map (\selection -> selection.position == position)
+                            |> Maybe.withDefault False
+                      )
                     ]
                 ]
                 []
+
+
+viewRank : Rank -> String
+viewRank rank =
+    case rank of
+        King ->
+            "King"
+
+        Queen ->
+            "Queen"
+
+        Rook ->
+            "Rook"
+
+        Bishop ->
+            "Bishop"
+
+        Knight ->
+            "Knight"
+
+        Pawn ->
+            "Pawn"
+
+
+viewColor : Color -> String
+viewColor color =
+    case color of
+        White ->
+            "White"
+
+        Black ->
+            "Black"

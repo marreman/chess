@@ -51,7 +51,7 @@ body {
   top: 3px;
   left: 3px;
   font-size: 10px;
-  color: rgba(0,0,0,0.15);
+  color: rgba(0, 0, 0, 0.15);
 }
 
 .piece {
@@ -60,18 +60,42 @@ body {
   line-height: 1;
 }
 
-.King.White:before { content: "♔"; }
-.King.Black:before { content: "♚"; }
-.Queen.White:before { content: "♕"; }
-.Queen.Black:before { content: "♛"; }
-.Bishop.White:before { content: "♗"; }
-.Bishop.Black:before { content: "♝"; }
-.Knight.White:before { content: "♘"; }
-.Knight.Black:before { content: "♞"; }
-.Rook.White:before { content: "♖"; }
-.Rook.Black:before { content: "♜"; }
-.Pawn.White:before { content: "♙"; }
-.Pawn.Black:before { content: "♟"; }
+.King.White:before {
+  content: "♔";
+}
+.King.Black:before {
+  content: "♚";
+}
+.Queen.White:before {
+  content: "♕";
+}
+.Queen.Black:before {
+  content: "♛";
+}
+.Bishop.White:before {
+  content: "♗";
+}
+.Bishop.Black:before {
+  content: "♝";
+}
+.Knight.White:before {
+  content: "♘";
+}
+.Knight.Black:before {
+  content: "♞";
+}
+.Rook.White:before {
+  content: "♖";
+}
+.Rook.Black:before {
+  content: "♜";
+}
+.Pawn.White:before {
+  content: "♙";
+}
+.Pawn.Black:before {
+  content: "♟";
+}
 
 .selected:before {
   color: #669866;

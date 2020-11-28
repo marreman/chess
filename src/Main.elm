@@ -1,15 +1,16 @@
 module Main exposing (..)
 
+import Browser
 import Html
 import Model
 import Update
 import View
 
 
-main : Program Never Model.Model Update.Msg
+main : Program () Model.Model Update.Msg
 main =
-    Html.beginnerProgram
-        { model = Model.model
+    Browser.sandbox
+        { init = Model.model
         , update = Update.update
         , view = View.view
         }

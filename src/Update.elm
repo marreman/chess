@@ -27,12 +27,12 @@ update msg model =
                                 getValidMoves model.board piece position
                         }
             in
-                case model.selection of
-                    Nothing ->
-                        { model | selection = selection }
+            case model.selection of
+                Nothing ->
+                    { model | selection = selection }
 
-                    _ ->
-                        model
+                _ ->
+                    model
 
         MoveTo position ->
             case model.selection of
@@ -50,15 +50,15 @@ update msg model =
                                 |> Dict.remove selection.position
                                 |> Dict.update position (\_ -> Just piece)
                     in
-                        case pieceToMove of
-                            Nothing ->
-                                model
+                    case pieceToMove of
+                        Nothing ->
+                            model
 
-                            Just piece ->
-                                { model
-                                    | board = movePiece piece
-                                    , selection = Nothing
-                                }
+                        Just piece ->
+                            { model
+                                | board = movePiece piece
+                                , selection = Nothing
+                            }
 
 
 getValidMoves : Board -> Piece -> Position -> List Position
@@ -69,14 +69,16 @@ getValidMoves board piece position =
                 regularMoves =
                     case piece.color of
                         Black ->
-                            if (Tuple.first position) == 1 then
+                            if Tuple.first position == 1 then
                                 [ south, path [ south, south ] ]
+
                             else
                                 [ south ]
 
                         White ->
-                            if (Tuple.first position) == 6 then
+                            if Tuple.first position == 6 then
                                 [ north, path [ north, north ] ]
+
                             else
                                 [ north ]
 
@@ -88,14 +90,14 @@ getValidMoves board piece position =
                         White ->
                             [ northEast, northWest ]
             in
-                List.concat
-                    [ regularMoves
-                        |> List.map (sum position)
-                        |> List.filter (isEmpty board)
-                    , capturingMoves
-                        |> List.map (sum position)
-                        |> List.filter (hasEnemyPiece board piece)
-                    ]
+            List.concat
+                [ regularMoves
+                    |> List.map (sum position)
+                    |> List.filter (isEmpty board)
+                , capturingMoves
+                    |> List.map (sum position)
+                    |> List.filter (hasEnemyPiece board piece)
+                ]
 
         King ->
             let
@@ -110,9 +112,9 @@ getValidMoves board piece position =
                     , northWest
                     ]
             in
-                moves
-                    |> List.map (sum position)
-                    |> List.filter (isEmptyOrHasEnemyPiece board piece)
+            moves
+                |> List.map (sum position)
+                |> List.filter (isEmptyOrHasEnemyPiece board piece)
 
         Knight ->
             let
@@ -127,9 +129,9 @@ getValidMoves board piece position =
                     , path [ east, south, south ]
                     ]
             in
-                moves
-                    |> List.map (sum position)
-                    |> List.filter (isEmptyOrHasEnemyPiece board piece)
+            moves
+                |> List.map (sum position)
+                |> List.filter (isEmptyOrHasEnemyPiece board piece)
 
         Rook ->
             List.concat
@@ -166,14 +168,17 @@ traverse board piece position direction =
         newPosition =
             sum position direction
     in
-        if isOutsideBoard newPosition then
-            []
-        else if hasFriendlyPiece board piece newPosition then
-            []
-        else if hasEnemyPiece board piece newPosition then
-            [ newPosition ]
-        else
-            [ newPosition ] ++ traverse board piece newPosition direction
+    if isOutsideBoard newPosition then
+        []
+
+    else if hasFriendlyPiece board piece newPosition then
+        []
+
+    else if hasEnemyPiece board piece newPosition then
+        [ newPosition ]
+
+    else
+        [ newPosition ] ++ traverse board piece newPosition direction
 
 
 isOutsideBoard : Position -> Bool
