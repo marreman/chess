@@ -68,13 +68,6 @@ getValidMoves board piece position =
             let
                 regularMoves =
                     case piece.color of
-                        Black ->
-                            if Tuple.first position == 1 then
-                                [ south, path [ south, south ] ]
-
-                            else
-                                [ south ]
-
                         White ->
                             if Tuple.first position == 6 then
                                 [ north, path [ north, north ] ]
@@ -82,13 +75,20 @@ getValidMoves board piece position =
                             else
                                 [ north ]
 
+                        Black ->
+                            if Tuple.first position == 1 then
+                                [ south, path [ south, south ] ]
+
+                            else
+                                [ south ]
+
                 capturingMoves =
                     case piece.color of
-                        Black ->
-                            [ southEast, southWest ]
-
                         White ->
                             [ northEast, northWest ]
+
+                        Black ->
+                            [ southEast, southWest ]
             in
             List.concat
                 [ regularMoves
@@ -100,36 +100,28 @@ getValidMoves board piece position =
                 ]
 
         King ->
-            let
-                moves =
-                    [ north
-                    , northEast
-                    , east
-                    , southEast
-                    , south
-                    , southWest
-                    , west
-                    , northWest
-                    ]
-            in
-            moves
+            [ north
+            , northEast
+            , east
+            , southEast
+            , south
+            , southWest
+            , west
+            , northWest
+            ]
                 |> List.map (sum position)
                 |> List.filter (isEmptyOrHasEnemyPiece board piece)
 
         Knight ->
-            let
-                moves =
-                    [ path [ north, north, east ]
-                    , path [ north, north, west ]
-                    , path [ west, west, north ]
-                    , path [ west, west, south ]
-                    , path [ west, south, south ]
-                    , path [ east, east, north ]
-                    , path [ east, east, south ]
-                    , path [ east, south, south ]
-                    ]
-            in
-            moves
+            [ path [ north, north, east ]
+            , path [ north, north, west ]
+            , path [ west, west, north ]
+            , path [ west, west, south ]
+            , path [ west, south, south ]
+            , path [ east, east, north ]
+            , path [ east, east, south ]
+            , path [ east, south, south ]
+            ]
                 |> List.map (sum position)
                 |> List.filter (isEmptyOrHasEnemyPiece board piece)
 
